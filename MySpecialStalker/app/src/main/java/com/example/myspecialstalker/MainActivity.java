@@ -18,9 +18,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String READ_PHONE_STATE = "READ_PHONE_STATE";
     public static final String PROCESS_OUTGOING_CALLS = "PROCESS_OUTGOING_CALLS";
     public static final String SEND_SMS = "SEND_SMS";
+    public static final String RECEIVE_SMS = "RECEIVE_SMS";
     public static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 0;
     public static final int MY_PERMISSIONS_REQUEST_PROCESS_OUTGOING_CALLS = 1;
     public static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 2;
+    public static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 3;
     static public EditText sms_num;
     static public EditText sms_text;
     public TextView info_text;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         permissions_map.put(READ_PHONE_STATE, false);
         permissions_map.put(PROCESS_OUTGOING_CALLS, false);
         permissions_map.put(SEND_SMS, false);
+        permissions_map.put(RECEIVE_SMS, false);
+
 
         initialize_widgets();
 
@@ -86,6 +90,19 @@ public class MainActivity extends AppCompatActivity {
             check_if_permissions_granted();
         }
 
+        // Check if RECEIVE_SMS permission is granted
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECEIVE_SMS},
+                    MY_PERMISSIONS_REQUEST_RECEIVE_SMS);
+
+        }
+        else {
+            permissions_map.put(RECEIVE_SMS, true);
+            check_if_permissions_granted();
+        }
     }
 
 
@@ -119,9 +136,16 @@ public class MainActivity extends AppCompatActivity {
                     permissions_map.put(SEND_SMS, true);
                     check_if_permissions_granted();
                 }
-
             }
 
+            case MY_PERMISSIONS_REQUEST_RECEIVE_SMS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    permissions_map.put(RECEIVE_SMS, true);
+                    check_if_permissions_granted();
+                }
+            }
         }
 
     }
@@ -132,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void check_if_permissions_granted() {
         if (permissions_map.get(READ_PHONE_STATE) && permissions_map.get(PROCESS_OUTGOING_CALLS)
-                && permissions_map.get(SEND_SMS)) {
+                && permissions_map.get(SEND_SMS) && permissions_map.get(RECEIVE_SMS)) {
             update_widgets();
         }
     }
@@ -151,14 +175,10 @@ public class MainActivity extends AppCompatActivity {
         sms_num.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                // TODO Auto-generated method stub
             }
 
             @Override
@@ -173,14 +193,10 @@ public class MainActivity extends AppCompatActivity {
         sms_text.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                // TODO Auto-generated method stub
             }
 
             @Override
