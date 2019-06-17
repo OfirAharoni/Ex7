@@ -56,7 +56,6 @@ public class broadcast extends BroadcastReceiver {
                 }
             }
         };
-
         // Create Broadcast Receiver for delivering messages
         BroadcastReceiver deliverSMS = new BroadcastReceiver() {
             @Override
