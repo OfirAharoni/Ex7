@@ -55,7 +55,6 @@ public class NotificationsIntentService extends IntentService {
             }
         }
 
-
         else if (dataString.equals(DELIVERED_EXTRA)) {
             // create notification for message delivered
                 Notification notification = createNotification(this, DELIVERED_NOTI_TITLE, DELIVERED_NOTI_TEXT, DELIVERED_NOTI_ID);
@@ -66,10 +65,10 @@ public class NotificationsIntentService extends IntentService {
             }
         }
 
+    /**
+     * This function will create and display notification for the given parameters.
+     */
     static Notification createNotification(Context context, String title, String text, int id) {
-        /**
-         * This function will create and display notification for the given parameters.
-         */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.drawable.icon)

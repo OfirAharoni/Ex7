@@ -308,6 +308,10 @@ public class MainActivity extends AppCompatActivity {
         sms_text.setText(load_sms_text);
     }
 
+    /**
+     * This function is responsible for creating a notification channel
+     * for SMS sending process.
+     */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(

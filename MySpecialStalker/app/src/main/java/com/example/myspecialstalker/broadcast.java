@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.widget.Toast;
 
 public class broadcast extends BroadcastReceiver {
@@ -24,7 +23,6 @@ public class broadcast extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         String calling_dest = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         PendingIntent sentPI = PendingIntent.getBroadcast(context, 0, new Intent(SENT), 0);
         PendingIntent deliveredPI = PendingIntent.getBroadcast(context, 0, new Intent(DELIVERED), 0);
@@ -76,6 +74,7 @@ public class broadcast extends BroadcastReceiver {
         context.getApplicationContext().registerReceiver(sendSMS, new IntentFilter(SENT));
         context.getApplicationContext().registerReceiver(deliverSMS, new IntentFilter(DELIVERED));
 
+        // Get message info - text & destination
         SmsManager smsManager = SmsManager.getDefault();
         String text = MainActivity.sms_text.getText().toString() + calling_dest;
         String sms_dest = MainActivity.sms_num.getText().toString();
@@ -89,6 +88,11 @@ public class broadcast extends BroadcastReceiver {
 
 
 
+    /**
+     * This function responsible for starting a Intent Service with Foreground service.
+     * We use the NotificationIntentService I've created for dealing with notification
+     * background tasks.
+     */
     public void startService(Context context, String Extra)
     {
         Intent serviceIntent = new Intent(context, NotificationsIntentService.class);
