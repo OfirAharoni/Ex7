@@ -1,8 +1,11 @@
 package com.example.myspecialstalker;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +22,20 @@ public class MainActivity extends AppCompatActivity {
     public static final String PROCESS_OUTGOING_CALLS = "PROCESS_OUTGOING_CALLS";
     public static final String SEND_SMS = "SEND_SMS";
     public static final String RECEIVE_SMS = "RECEIVE_SMS";
+
     public static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 0;
     public static final int MY_PERMISSIONS_REQUEST_PROCESS_OUTGOING_CALLS = 1;
     public static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 2;
     public static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 3;
+    private static final String CHANNEL_ID = "NotificatioinChannel";
+    private static final String CHANNEL_NAME = "SMS Notifications channel";
+    public static final String SHARED_PREFERENCES = "shared preferences";
+    public static final String SMS_NUM_KEY = "sms_num";
+    public static final String SMS_TEXT_KEY = "sms_text";
+    public static final String DEF_VALUE = "";
+    public static final String DEF_TEXT_VALUE = "I'm going to call this number:";
+    public static final String MESSAGE_FOR_FILLED_FIELDS = "The app is ready to send SMS messages.";
+    public static final String MESSAGE_FOR_UNFILLED_FIELDS = "Please make sure all the fields are filled.";
     static public EditText sms_num;
     static public EditText sms_text;
     public TextView info_text;
@@ -103,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
             permissions_map.put(RECEIVE_SMS, true);
             check_if_permissions_granted();
         }
+
+        createNotificationChannel();
     }
 
 
@@ -244,11 +259,11 @@ public class MainActivity extends AppCompatActivity {
         sms_text.getText().toString().length() > 0)
         {
 
-            info_text.setText("The app is ready to send SMS messages.");
+            info_text.setText(MESSAGE_FOR_FILLED_FIELDS);
         }
         else
         {
-            info_text.setText("Please make sure all the fields are filled.");
+            info_text.setText(MESSAGE_FOR_UNFILLED_FIELDS);
         }
     }
 
@@ -266,16 +281,16 @@ public class MainActivity extends AppCompatActivity {
      * This function save the input from the user with sharedPreferences.
      */
     public void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("sms_num", sms_num.getText().toString());
+        editor.putString(SMS_NUM_KEY, sms_num.getText().toString());
         if (sms_text.getText().toString().length() == 0)
         {
-            editor.putString("sms_text", "I'm going to call this number:");
+            editor.putString(SMS_TEXT_KEY, DEF_TEXT_VALUE);
         }
         else
         {
-            editor.putString("sms_text", sms_text.getText().toString());
+            editor.putString(SMS_TEXT_KEY, sms_text.getText().toString());
         }
         editor.apply();
     }
@@ -286,11 +301,24 @@ public class MainActivity extends AppCompatActivity {
      */
     private void loadData()
     {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        String load_sms_num = sharedPreferences.getString("sms_num", "");
-        String load_sms_text = sharedPreferences.getString("sms_text", "I'm going to call this number:");
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+        String load_sms_num = sharedPreferences.getString(SMS_NUM_KEY, DEF_VALUE);
+        String load_sms_text = sharedPreferences.getString(SMS_TEXT_KEY, DEF_TEXT_VALUE);
         sms_num.setText(load_sms_num);
         sms_text.setText(load_sms_text);
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
     }
 
 }
