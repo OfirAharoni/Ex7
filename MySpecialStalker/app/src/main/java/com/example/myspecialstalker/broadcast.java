@@ -1,4 +1,5 @@
 package com.example.myspecialstalker;
+// Created by Ofir Aharoni
 
 import android.app.Activity;
 import android.app.PendingIntent;
